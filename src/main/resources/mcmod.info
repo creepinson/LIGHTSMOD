@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lightson",
+  "name": "Lights On",
+  "description": "A lighting mod I made for SoleSurvivior. ",
+  "version": "1.0.0",
+  "mcversion": "1.10.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Creepinson"],
+  "credits": "The Forge and FML guys, for making this mod possible to make; SoleSurvivor for the idea",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

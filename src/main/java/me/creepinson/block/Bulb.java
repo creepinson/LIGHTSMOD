@@ -20,12 +20,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
 public class Bulb extends BlockContainer {
 	protected static final AxisAlignedBB DEFAULT_AABB = new AxisAlignedBB(0.25D, 0.0D, 0.25D, 0.75D, 0.5D, 0.75D);
@@ -42,9 +44,14 @@ public class Bulb extends BlockContainer {
 		return EnumBlockRenderType.MODEL;
 	}
 
+	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
 		if (!worldIn.isRemote) {
-			NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
+			if (state.getBlock() != Blocks.AIR) {
+				NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
+				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()),
+						new TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 200));
+			}
 		}
 	}
 
@@ -64,9 +71,14 @@ public class Bulb extends BlockContainer {
 
 	private int ticks;
 
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos neighborPos) {
 		if (!worldIn.isRemote) {
-			NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
+			if (state.getBlock() != Blocks.AIR) {
+				NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
+				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()),
+						new TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 200));
+			}
 		}
 	}
 
@@ -155,25 +167,18 @@ public class Bulb extends BlockContainer {
 	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return false;
 	}
-	
+
 	/*
-	@Override
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		IBlockState state = worldIn.getBlockState(pos);
-		if (side == EnumFacing.DOWN && state.getValue(FACING) == EnumFacing.UP) {
-			return true;
-		} else if (side == EnumFacing.UP && state.getValue(FACING) == EnumFacing.DOWN) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	*/
+	 * @Override public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos,
+	 * EnumFacing side) { IBlockState state = worldIn.getBlockState(pos); if (side
+	 * == EnumFacing.DOWN && state.getValue(FACING) == EnumFacing.UP) { return true;
+	 * } else if (side == EnumFacing.UP && state.getValue(FACING) ==
+	 * EnumFacing.DOWN) { return true; } else { return false; } }
+	 */
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer, ItemStack stack) {
-
+			float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH || facing == EnumFacing.WEST
 				|| facing == EnumFacing.EAST) {
 			this.dropBlockAsItem(world, pos, this.getDefaultState(), 0);
@@ -183,7 +188,6 @@ public class Bulb extends BlockContainer {
 			return this.getDefaultState().withProperty(FACING, facing.getOpposite());
 
 		}
-
 	}
 
 	@Override

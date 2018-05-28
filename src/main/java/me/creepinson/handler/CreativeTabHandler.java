@@ -12,9 +12,9 @@ public class CreativeTabHandler {
 
 
 		@Override
-		public Item getTabIconItem() {
+		public ItemStack getTabIconItem() {
 			
-			return BlockHandler.bulbItem;
+			return new ItemStack(BlockHandler.bulbItem);
 		};
 	    
 	};

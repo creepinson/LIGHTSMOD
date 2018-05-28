@@ -3,18 +3,19 @@ package me.creepinson.packet;
 import me.creepinson.block.Bulb;
 import me.creepinson.handler.BlockHandler;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketHandlerBulbCheck implements IMessageHandler<PacketBulbCheck, IMessage> {
+public class PacketHandlerBulbCheckClient implements IMessageHandler<PacketBulbCheckClient, IMessage> {
 
 	@Override
-	public IMessage onMessage(PacketBulbCheck message, MessageContext ctx) {
+	public IMessage onMessage(PacketBulbCheckClient message, MessageContext ctx) {
 
-		World world = ctx.getServerHandler().playerEntity.worldObj;
+		World world = Minecraft.getMinecraft().thePlayer.worldObj;
 		BlockPos pos = new BlockPos(message.x, message.y, message.z);
 		IBlockState state = world.getBlockState(pos);
 		if (state.getBlock() == BlockHandler.bulb) {

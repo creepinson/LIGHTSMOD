@@ -15,13 +15,13 @@ version = "1.0.0"
 group= "me.creepinson.core" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "lightson"
 
-sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.6"
+    sourceCompatibility = targetCompatibility = "1.8"
 }
 
 minecraft {
-    version = "1.10.2-12.18.3.2511"
+    version = "1.11.2-13.20.1.2588"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.

@@ -1,8 +1,8 @@
 package me.creepinson.block;
 
-import java.util.Random;
-
 import me.creepinson.handler.BlockHandler;
+import me.creepinson.handler.NetworkHandler;
+import me.creepinson.packet.PacketBulbCheck;
 import me.creepinson.tileentity.TEBulb;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -44,14 +44,7 @@ public class Bulb extends BlockContainer {
 
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
 		if (!worldIn.isRemote) {
-			if (state.getValue(LIT).booleanValue() && !worldIn.isBlockPowered(pos)) {
-
-				worldIn.setBlockState(pos, state.withProperty(LIT, Boolean.valueOf(false)), 2);
-		
-		} else if (!state.getValue(LIT).booleanValue() && worldIn.isBlockPowered(pos)) {
-				worldIn.setBlockState(pos, state.withProperty(LIT, Boolean.valueOf(true)), 2);
-				
-			}
+			NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
 		}
 	}
 
@@ -64,70 +57,61 @@ public class Bulb extends BlockContainer {
 		setHardness(hardness);
 		setResistance(resistance);
 		setHarvestLevel(tool, harvest);
-		this.setDefaultState(
-				this.blockState.getBaseState().withProperty(FACING, EnumFacing.DOWN).withProperty(LIT, Boolean.valueOf(false)));
-		
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.DOWN).withProperty(LIT,
+				Boolean.valueOf(false)));
+
 	}
 
 	private int ticks;
 
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		if (!worldIn.isRemote) {
-			if (state.getValue(LIT).booleanValue() && !worldIn.isBlockPowered(pos)) {
-				worldIn.setBlockState(pos, state.withProperty(LIT, Boolean.valueOf(false)), 2);
-
-
-			} else if (!state.getValue(LIT).booleanValue() && worldIn.isBlockPowered(pos)) {
-				worldIn.setBlockState(pos, state.withProperty(LIT, Boolean.valueOf(true)), 2);
-			
-
-			}
+			NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
 		}
 	}
 
 	@Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
- 
-    	  if (state.getValue(LIT).booleanValue())
-	        {
-	            return 15;
-	            
-	        }
-    	  else {
-    		  
-    		  return 0;
-    		  
-    	  }
-		
-    }
-//
-//	@Override
-//	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-//		if (!worldIn.isRemote) {
-//
-//			
-//		
-//		}
-//		if (ticks == 60) {
-//
-//			ticks = 0;
-//
-//		}
-//
-//		ticks++;
-//
-//		super.updateTick(worldIn, pos, state, rand);
-//	}
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+
+		if (state.getValue(LIT).booleanValue()) {
+			return 15;
+
+		} else {
+
+			return 0;
+
+		}
+
+	}
+	//
+	// @Override
+	// public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random
+	// rand) {
+	// if (!worldIn.isRemote) {
+	//
+	//
+	//
+	// }
+	// if (ticks == 60) {
+	//
+	// ticks = 0;
+	//
+	// }
+	//
+	// ticks++;
+	//
+	// super.updateTick(worldIn, pos, state, rand);
+	// }
 
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
 
 		worldIn.removeTileEntity(pos);
-		
+
 		worldIn.scheduleUpdate(pos, this, 2);
-		
+
 		this.dropBlockAsItem(worldIn, pos, state, 0);
-		
+
 		super.onBlockHarvested(worldIn, pos, state, player);
 	}
 
@@ -140,19 +124,19 @@ public class Bulb extends BlockContainer {
 	}
 
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7)).withProperty(LIT,  Boolean.valueOf((meta & 1) > 0));
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7)).withProperty(LIT,
+				Boolean.valueOf((meta & 1) > 0));
 	}
 
 	public int getMetaFromState(IBlockState state) {
-		  int i = 0;
-	        i = i | ((EnumFacing)state.getValue(FACING)).getIndex();
+		int i = 0;
+		i = i | ((EnumFacing) state.getValue(FACING)).getIndex();
 
-	        if (((Boolean)state.getValue(LIT)).booleanValue())
-	        {
-	            i |= 8;
-	        }
+		if (((Boolean) state.getValue(LIT)).booleanValue()) {
+			i |= 8;
+		}
 
-	        return i;
+		return i;
 	}
 
 	public IBlockState withRotation(IBlockState state, Rotation rot) {
@@ -164,13 +148,27 @@ public class Bulb extends BlockContainer {
 	}
 
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[]{FACING,LIT});
+		return new BlockStateContainer(this, new IProperty[] { FACING, LIT });
 	}
 
 	@Override
 	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return false;
 	}
+	
+	/*
+	@Override
+	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
+		IBlockState state = worldIn.getBlockState(pos);
+		if (side == EnumFacing.DOWN && state.getValue(FACING) == EnumFacing.UP) {
+			return true;
+		} else if (side == EnumFacing.UP && state.getValue(FACING) == EnumFacing.DOWN) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	*/
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
@@ -214,24 +212,24 @@ public class Bulb extends BlockContainer {
 		}
 		IBlockState statey;
 		// check the block above
-		
+
 		statey = world.getBlockState(pos.up());
 		if (statey.getBlock().equals(BlockHandler.bulb)) {
 			this.dropBlockAsItem(world, pos, state, 0);
 			world.setBlockState(pos, Blocks.AIR.getDefaultState());
 			return;
-			
-		} 
-	// check the block above
+
+		}
+		// check the block above
 		IBlockState statey2;
 		statey2 = world.getBlockState(pos.up());
 		if (statey2.getBlock().equals(BlockHandler.bulb)) {
 			this.dropBlockAsItem(world, pos, state, 0);
 			world.setBlockState(pos, Blocks.AIR.getDefaultState());
 			return;
-			
-		} 
-		
+
+		}
+
 		// if (this.isNextToBulb(pos, world, false)) {
 		// this.dropBlockAsItem(world, pos, state, 0);
 		// world.setBlockState(pos, Blocks.AIR.getDefaultState());
@@ -338,7 +336,7 @@ public class Bulb extends BlockContainer {
 				if (isNextToLeaves(pos.up(), world, false))
 					return false;
 		}
-	return false;
+		return false;
 	}
-	
+
 }

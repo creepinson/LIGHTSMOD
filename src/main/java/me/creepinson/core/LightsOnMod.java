@@ -3,6 +3,7 @@ import java.util.Random;
 
 import me.creepinson.handler.BlockHandler;
 import me.creepinson.handler.ItemHandler;
+import me.creepinson.handler.NetworkHandler;
 import me.creepinson.lib.proxy.CommonProxy;
 import me.creepinson.lib.util.Utils;
 import net.minecraft.util.ResourceLocation;
@@ -28,12 +29,12 @@ public static LightsOnMod instance;
     public void preInit(FMLPreInitializationEvent event)
     {
     	
-    
     	ItemHandler.init();
     	ItemHandler.register();
     	BlockHandler.init();
     	BlockHandler.register();
-     	Utils.getLogger().info("Pre Init");
+     	NetworkHandler.init();
+    	Utils.getLogger().info("Pre Init");
     	
     
     	proxy.preInit();

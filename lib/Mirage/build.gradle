@@ -1,0 +1,115 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+		maven {
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+		maven {
+			name = "sonatype"
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+	}
+}
+
+plugins {
+	id 'net.minecrell.licenser' version '0.3'
+	id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
+
+group = "com.elytradev"
+archivesBaseName = "Mirage"
+version = "2.0.3-rc3"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	jcenter()
+	maven {
+		url = 'https://repo.elytradev.com'
+	}
+}
+
+configurations {
+	deploy
+}
+
+dependencies {
+	deploy 'org.apache.maven.wagon:wagon-ssh:2.10'
+	
+	compile 'com.elytradev:mini:0.2-SNAPSHOT'
+	shadow 'com.elytradev:mini:0.2-SNAPSHOT'
+}
+
+jar {
+	classifier = 'slim'
+}
+
+shadowJar {
+	classifier = ''
+	relocate 'com.elytradev.mini', 'com.elytradev.mirage.asm.repackage.com.elytradev.mini'
+	configurations = [project.configurations.shadow]
+}
+
+reobf {
+	shadowJar { mappingType = 'SEARGE' }
+}
+
+tasks.build.dependsOn reobfShadowJar
+
+tasks.reobfJar.doLast {
+	file('build/libs/'+archivesBaseName+'-'+version+'-slim.jar').delete()
+}
+
+artifacts {
+	archives shadowJar
+}
+
+minecraft {
+	version = '1.12.2-14.23.5.2838'
+	mappings = 'snapshot_20171003'
+
+	runDir = "minecraft"
+}
+
+processResources {
+	// this will ensure that this task is redone when the versions change.
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+
+	// replace stuff in mcmod.info, nothing else
+	from(sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+
+		// replace version and mcversion
+		expand 'version':project.version, 'mcversion':project.minecraft.version
+	}
+
+	// copy everything else, thats not the mcmod.info
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
+}
+
+minecraft.coreMod = 'com.elytradev.mirage.asm.FMLPlugin'
+
+jar {
+	manifest {
+		attributes 'FMLCorePlugin': 'com.elytradev.mirage.asm.FMLPlugin', 'FMLCorePluginContainsFMLMod': true
+	}
+}
+
+if (file('private.gradle').exists()) {
+	apply from: 'private.gradle'
+}

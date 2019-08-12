@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=up,lit=false": { "model": "lightson:alarm", "x": 180 },
+        "facing=down,lit=false": { "model": "lightson:alarm", "x": 0 },
+        "facing=up,lit=true": { "model": "lightson:alarm", "x": 180 },
+        "facing=down,lit=true": { "model": "lightson:alarm", "x": 0 }
+    }
+}

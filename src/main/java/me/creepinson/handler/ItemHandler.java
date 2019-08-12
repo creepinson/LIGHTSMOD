@@ -5,8 +5,12 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+@EventBusSubscriber
 public class ItemHandler {
 
 	public static void init() {
@@ -21,11 +25,10 @@ public class ItemHandler {
 
 	}
 
-	public static void registerItem(Item item) {
-
-		GameRegistry.register(item);
-		Utils.getLogger().info("Registered Item " + item.getUnlocalizedName().substring(5));
-
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event) {
+		init();
+		event.getRegistry().registerAll();
 	}
 
 	public static void registerRender(Item item) {

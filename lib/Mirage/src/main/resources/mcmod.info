@@ -1,0 +1,16 @@
+[
+{
+  "modid": "creepinocore",
+  "name": "Creepino Core",
+  "description": "creepinson's mod library.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Creepinson"],
+  "credits": "CptSpaceToaster for the colored lights api. ",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

@@ -28,11 +28,7 @@ public class LightsOnMod {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
-		ItemHandler.init();
-		ItemHandler.register();
-		BlockHandler.init();
-		BlockHandler.register();
-		NetworkHandler.init();
+
 		Utils.getLogger().info("Pre Init");
 
 		proxy.preInit();
@@ -42,7 +38,7 @@ public class LightsOnMod {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-
+		NetworkHandler.init();
 		Utils.getLogger().info("Init");
 		FMLCommonHandler.instance().bus().register(new me.creepinson.handler.event.EventHandler());
 		MinecraftForge.EVENT_BUS.register(new me.creepinson.handler.event.EventHandler());

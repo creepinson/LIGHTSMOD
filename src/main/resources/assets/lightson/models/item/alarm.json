@@ -1,0 +1,19 @@
+{
+
+       "parent": "lightson:block/alarm",
+        "display": {
+            "thirdperson_righthand": {
+            "rotation": [ -90, 0, 0 ],
+            "translation": [ 0, 1, -3 ],
+            "scale": [ 0.4, 0.4, 0.4 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ -22, 0, 0 ],
+            "translation": [ 0, 4, 2 ],
+            "scale": [ 0.4, 0.4, 0.4 ]
+        }
+                
+        
+        }
+
+    }

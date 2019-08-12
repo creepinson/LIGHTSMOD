@@ -1,0 +1,11 @@
+{
+  "alarm": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "lightson:alarm",
+        "stream": true
+      }
+    ]
+  }
+}

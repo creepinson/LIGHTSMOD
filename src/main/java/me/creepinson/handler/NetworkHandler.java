@@ -17,6 +17,6 @@ public class NetworkHandler
 	{
 		INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Utils.MODID);
 		INSTANCE.registerMessage(PacketHandlerBulbCheck.class, PacketBulbCheck.class, 0, Side.SERVER); 		
-		INSTANCE.registerMessage(PacketHandlerBulbCheckClient.class, PacketBulbCheckClient.class, 0, Side.CLIENT); 	
+		INSTANCE.registerMessage(PacketHandlerBulbCheckClient.class, PacketBulbCheckClient.class, 1, Side.CLIENT); 	
 	}
 }

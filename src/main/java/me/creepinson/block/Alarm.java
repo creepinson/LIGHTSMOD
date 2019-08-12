@@ -2,20 +2,26 @@ package me.creepinson.block;
 
 import me.creepinson.handler.BlockHandler;
 import me.creepinson.handler.NetworkHandler;
+import me.creepinson.handler.SoundHandler;
 import me.creepinson.packet.PacketBulbCheck;
+import me.creepinson.packet.PacketBulbCheckClient;
+import me.creepinson.tileentity.TEAlarm;
 import me.creepinson.tileentity.TEBulb;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -23,13 +29,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
-public class Bulb extends BlockContainer {
+public class Alarm extends Block implements ITileEntityProvider {
 	protected static final AxisAlignedBB DEFAULT_AABB = new AxisAlignedBB(0.25D, 0.0D, 0.25D, 0.75D, 0.5D, 0.75D);
 	protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.25D, 0.25D, 0.5D, 0.75D, 0.75D, 1.0D);
 	protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.25D, 0.25D, 0.0D, 0.75D, 0.75D, 0.5D);
@@ -37,11 +44,15 @@ public class Bulb extends BlockContainer {
 	protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.25D, 0.25D, 0.5D, 0.75D, 0.75D);
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.VERTICAL);
 	public static final PropertyBool LIT = PropertyBool.create("lit");
-
-	private boolean isOn;
-
+	
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
+	}
+
+	@Override
+	public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, EnumDyeColor color) {
+		// TODO Auto-generated method stub
+		return super.recolorBlock(world, pos, side, color);
 	}
 
 	@Override
@@ -49,13 +60,13 @@ public class Bulb extends BlockContainer {
 		if (!worldIn.isRemote) {
 			if (state.getBlock() != Blocks.AIR) {
 				NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
-				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()),
+				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheckClient(pos.getX(), pos.getY(), pos.getZ()),
 						new TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 200));
 			}
 		}
 	}
 
-	public Bulb(Material mat, String name, CreativeTabs tab, float hardness, float resistance, int harvest,
+	public Alarm(Material mat, String name, CreativeTabs tab, float hardness, float resistance, int harvest,
 			String tool) {
 		super(mat);
 		setUnlocalizedName(name);
@@ -72,29 +83,18 @@ public class Bulb extends BlockContainer {
 	private int ticks;
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos neighborPos) {
-		if (!worldIn.isRemote) {
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos neighborPos) {
+		if (!world.isRemote) {
 			if (state.getBlock() != Blocks.AIR) {
+				
 				NetworkHandler.INSTANCE.sendToServer(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()));
-				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheck(pos.getX(), pos.getY(), pos.getZ()),
-						new TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 200));
+				NetworkHandler.INSTANCE.sendToAllAround(new PacketBulbCheckClient(pos.getX(), pos.getY(), pos.getZ()),
+						new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 200));
 			}
 		}
 	}
 
-	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
 
-		if (state.getValue(LIT).booleanValue()) {
-			return 15;
-
-		} else {
-
-			return 0;
-
-		}
-
-	}
 	//
 	// @Override
 	// public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random
@@ -189,7 +189,7 @@ public class Bulb extends BlockContainer {
 
 		}
 	}
-	
+
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
 			ItemStack stack) {
@@ -237,12 +237,6 @@ public class Bulb extends BlockContainer {
 	// }
 	// else return this.getDefaultState().withProperty(FACING, EnumFacing.DOWN);
 	// }
-
-	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
-
-		return new TEBulb();
-	}
 
 	public boolean isNextToLeaves(BlockPos pos, World world, boolean checkNextBlock) {
 		IBlockState state;
@@ -327,5 +321,12 @@ public class Bulb extends BlockContainer {
 		}
 		return false;
 	}
+
+	@Override
+	public TileEntity createNewTileEntity(World world, int meta) {
+
+		return new TEAlarm(false);
+	}
+
 
 }

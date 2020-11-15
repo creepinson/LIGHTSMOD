@@ -1,8 +1,20 @@
 {
     "variants": {
-        "facing=up,lit=false": { "model": "lightson:bulb", "x": 180 },
-        "facing=down,lit=false": { "model": "lightson:bulb", "x": 0 },
-        "facing=up,lit=true": { "model": "lightson:bulb", "x": 180 },
-        "facing=down,lit=true": { "model": "lightson:bulb", "x": 0 }
+        "facing=up,lit=false": {
+            "model": "lightson:block/bulb",
+            "x": 180
+        },
+        "facing=down,lit=false": {
+            "model": "lightson:block/bulb",
+            "x": 0
+        },
+        "facing=up,lit=true": {
+            "model": "lightson:block/bulb_powered",
+            "x": 180
+        },
+        "facing=down,lit=true": {
+            "model": "lightson:block/bulb_powered",
+            "x": 0
+        }
     }
 }

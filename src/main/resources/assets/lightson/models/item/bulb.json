@@ -1,19 +1,39 @@
 {
-
-       "parent": "lightson:block/bulb",
-        "display": {
-            "thirdperson_righthand": {
-            "rotation": [ -90, 0, 0 ],
-            "translation": [ 0, 1, -3 ],
-            "scale": [ 0.4, 0.4, 0.4 ]
+    "parent": "lightson:block/bulb",
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [
+                -90,
+                0,
+                0
+            ],
+            "translation": [
+                0,
+                1,
+                -3
+            ],
+            "scale": [
+                0.4,
+                0.4,
+                0.4
+            ]
         },
         "firstperson_lefthand": {
-            "rotation": [ 0, 0, 0 ],
-            "translation": [ 0, 4, 2 ],
-            "scale": [ 1, 1, 1 ]
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "translation": [
+                0,
+                4,
+                2
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ]
         }
-                
-        
-        }
-
     }
+}

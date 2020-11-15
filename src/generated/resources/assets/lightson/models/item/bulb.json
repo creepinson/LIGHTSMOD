@@ -1,0 +1,29 @@
+{
+  "parent": "lightson:block/bulb",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [
+        -90,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1,
+        -3
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        0,
+        4,
+        2
+      ]
+    }
+  }
+}

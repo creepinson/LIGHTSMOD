@@ -1,0 +1,14 @@
+{
+    "parent": "forge:item/default",
+    "loader": "forge:composite",
+    "parts": {
+        "part1": {
+            "loader": "forge:obj",
+            "model": "lightson:models/block/mesh/bulb.obj",
+            "textures": {
+                "#default": "lightson:block/bulb_grey",
+                "#top": "lightson:block/bulb_top"
+            }
+        }
+    }
+}

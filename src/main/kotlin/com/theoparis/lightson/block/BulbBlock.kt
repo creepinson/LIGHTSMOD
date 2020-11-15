@@ -1,6 +1,6 @@
 package com.theoparis.lightson.block
 
-import com.theoparis.lightson.util.ForgeUtils.dropBlock
+import com.theoparis.creepinoutils.util.dropBlock
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -95,6 +95,7 @@ class BulbBlock(properties: Properties) : DirectionalBlock(properties) {
         } else
             defaultState.with(FACING, facing.opposite)
     }
+
 
     override fun onBlockPlacedBy(
         world: World,
